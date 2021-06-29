@@ -31,6 +31,10 @@ A CLI application to enter and maintain a company's employees, roles and departm
 
 ![View Employees](./screenshots/viewEmployees.png)
 
+## Walkthrough
+
+[Walkthrough Video](https://drive.google.com/file/d/1raUqjT57iGGTt3pGCr4Aeu1dhlzTMGso/view?usp=sharing)
+
 ## Author
 
 Justin Byrd [email](mailto:justin_byrd@hotmail.com)
