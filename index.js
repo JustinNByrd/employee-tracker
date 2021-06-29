@@ -22,6 +22,7 @@ function mainMenu() {
 				'View Departments',
 				'View Roles',
 				'Add Department',
+				'Add Role',
 				'End Program'
 			],
 			name: 'mainMenu'
@@ -42,6 +43,9 @@ function mainMenu() {
 					break;
 				case 'Add Department':
 					addDepartment();
+					break;
+				case 'Add Role':
+					addRole();
 					break;
 				case 'End Program':
 					process.exit();
@@ -94,7 +98,7 @@ function addDepartment() {
 	const question = [
 		{
 			type: 'input',
-			message: 'What is the name of the new department?',
+			message: 'What is the name of the new Department?',
 			name: 'department'
 		}
 	];
@@ -110,6 +114,53 @@ function addDepartment() {
 					});
 			});
 		});
+}
+
+function addRole() {
+	const departmentArr = [];
+	const sqlStmt = 'select id, name from department order by name';
+	connection.query(sqlStmt, (err, res) => {
+		if (err) throw err;
+		for (let i = 0; i < res.length; i++) {
+			departmentArr.push({value: res[i].id, name: res[i].name});
+		}
+		const questions = [
+			{
+				type: 'input',
+				message: "What is the new Role's title?",
+				name: 'roleTitle'
+			},
+			{
+				type: 'list',
+				message: 'What Deparment does the new Role belong to?',
+				choices: departmentArr,
+				name: 'department'
+			},
+			{
+				type: 'input',
+				message: "What is the new Role's salary?",
+				name: 'salary'
+			}
+		];
+		inquirer
+			.prompt(questions)
+			.then((answers) => {
+				connection.query('INSERT INTO role SET ?',
+					{
+						title: answers.roleTitle,
+						salary: answers.salary,
+						department_id: answers.department
+					},
+					(err, res) => {
+						if (err) throw err;
+						console.log('Role Added!');
+						pressAnyKey()
+							.then( () => {
+								mainMenu();
+							});
+					})
+			});
+	});
 }
 
 mainMenu();
