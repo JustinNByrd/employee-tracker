@@ -61,6 +61,7 @@ function mainMenu() {
 					viewUtilizedBudget();
 					break;
 				case 'End Program':
+					console.clear();
 					process.exit();
 			}
 		})
