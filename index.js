@@ -25,6 +25,7 @@ function mainMenu() {
 				'Add Role',
 				'Add Employee',
 				'Update Employee Role',
+				'View Utilized Budget by Department',
 				'End Program'
 			],
 			name: 'mainMenu'
@@ -54,6 +55,9 @@ function mainMenu() {
 					break;
 				case 'Update Employee Role':
 					updateEmployee();
+					break;
+				case 'View Utilized Budget by Department':
+					viewUtilizedBudget();
 					break;
 				case 'End Program':
 					process.exit();
@@ -278,7 +282,21 @@ function updateEmployee() {
 				});
 		});
 	});
-	
+}
+
+function viewUtilizedBudget() {
+	connection.query(`select c.name as Department, sum(b.salary) as Salary
+							from employee a inner join role b on a.role_id = b.id
+								inner join department c on b.department_id = c.id
+							group by c.name
+							order by c.name`, 
+		(err, res) => {
+			console.table(res);
+			pressAnyKey()
+				.then( () => {
+					mainMenu();
+				});
+		});
 }
 
 mainMenu();
