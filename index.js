@@ -24,6 +24,7 @@ function mainMenu() {
 				'Add Department',
 				'Add Role',
 				'Add Employee',
+				'Update Employee Role',
 				'End Program'
 			],
 			name: 'mainMenu'
@@ -50,6 +51,9 @@ function mainMenu() {
 					break;
 				case 'Add Employee':
 					addEmployee();
+					break;
+				case 'Update Employee Role':
+					updateEmployee();
 					break;
 				case 'End Program':
 					process.exit();
@@ -225,6 +229,56 @@ function addEmployee() {
 				)});
 		});
 	});
+}
+
+function updateEmployee() {
+	const roleArr = [];
+	const empArr = [];
+	connection.query("select id, concat(last_name, ', ', first_name) as Employee from employee order by last_name, first_name", (err, res) => {
+		if (err) throw err;
+		for (let i = 0; i < res.length; i++)
+			empArr.push({value: res[i].id, name: res[i].Employee});
+		connection.query('select id, title from role order by title', (err, res) => {
+			for (let i = 0; i < res.length; i++)
+				roleArr.push({value: res[i].id, name: res[i].title});
+			const questions = [
+				{
+					type: 'list',
+					message: 'Which Employee would you like to update?',
+					choices: empArr,
+					name: 'employee'
+				},
+				{
+					type: 'list',
+					message: "What is the Employee's new Role?",
+					choices: roleArr,
+					name: 'role'
+				}
+			];
+			inquirer
+				.prompt(questions)
+				.then((answers) => {
+					connection.query('UPDATE employee SET ? WHERE ?',
+						[
+							{
+								role_id: answers.role
+							},
+							{
+								id: answers.employee
+							}
+						],
+						(err, res) => {
+							console.log("Employee Updated!");
+							pressAnyKey()
+								.then( () => {
+									mainMenu();
+								});
+						}
+					);
+				});
+		});
+	});
+	
 }
 
 mainMenu();
