@@ -2,6 +2,7 @@ const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const cTable = require('console.table');
 require('dotenv').config();
+const pressAnyKey = require('press-any-key');
 
 const connection = mysql.createConnection({
 	host: process.env.DATABASE_HOST,
@@ -34,10 +35,17 @@ function mainMenu() {
 }
 
 function viewEmployees() {
-	const sqlStmt = `select CONCAT(a.last_name, ', ', a.first_name) as Employee, b.title as Title, b.salary as Salary, c.name as Department, CONCAT(d.last_name, ', ', d.first_name) as Manager from employee a, role b, department c, employee d where a.role_id = b.id and b.department_id = c.id and a.manager_id = d.id`;
+	const sqlStmt = `select concat(a.first_name, ', ', a.last_name) as Employee, c.title as Title, c.salary as Salary, d.name as Department, concat(b.first_name, ', ', b.last_name) as Manager
+							from employee a left join employee b on a.manager_id = b.id
+								inner join role c on a.role_id = c.id
+								inner join department d on c.department_id = d.id`;
 	connection.query(sqlStmt, (err, res) => {
 		if (err) throw err;
 		console.table(res);
+		pressAnyKey()
+			.then( () => {
+				mainMenu();
+			})
 	});
 }
 
