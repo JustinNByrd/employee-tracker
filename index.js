@@ -20,6 +20,7 @@ function mainMenu() {
 			choices: [
 				'View Employees',
 				'View Departments',
+				'View Roles',
 				'End Program'
 			],
 			name: 'mainMenu'
@@ -34,6 +35,9 @@ function mainMenu() {
 					break;
 				case 'View Departments':
 					viewDepartments();
+					break;
+				case 'View Roles':
+					viewRoles();
 					break;
 				case 'End Program':
 					process.exit();
@@ -58,6 +62,20 @@ function viewEmployees() {
 
 function viewDepartments() {
 	const sqlStmt = `select name as Name from department order by name`;
+	connection.query(sqlStmt, (err, res) => {
+		if (err) throw err;
+		console.table(res);
+		pressAnyKey()
+			.then( () => {
+				mainMenu();
+			});
+	});
+}
+
+function viewRoles() {
+	const sqlStmt = `select a.title as Title, a.salary as Salary, b.name as Department
+							from role a inner join department b on a.department_id = b.id
+							order by salary desc`;
 	connection.query(sqlStmt, (err, res) => {
 		if (err) throw err;
 		console.table(res);
