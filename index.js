@@ -67,10 +67,11 @@ function mainMenu() {
 }
 
 function viewEmployees() {
-	const sqlStmt = `select concat(a.first_name, ', ', a.last_name) as Employee, c.title as Title, c.salary as Salary, d.name as Department, concat(b.first_name, ', ', b.last_name) as Manager
+	const sqlStmt = `select concat(a.last_name, ', ', a.first_name) as Employee, c.title as Title, c.salary as Salary, d.name as Department, ifnull(concat(b.first_name, ', ', b.last_name),'') as Manager
 							from employee a left join employee b on a.manager_id = b.id
 								inner join role c on a.role_id = c.id
-								inner join department d on c.department_id = d.id`;
+								inner join department d on c.department_id = d.id
+							order by a.last_name, a.first_name`;
 	connection.query(sqlStmt, (err, res) => {
 		if (err) throw err;
 		console.table(res);
