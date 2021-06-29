@@ -23,6 +23,7 @@ function mainMenu() {
 				'View Roles',
 				'Add Department',
 				'Add Role',
+				'Add Employee',
 				'End Program'
 			],
 			name: 'mainMenu'
@@ -46,6 +47,9 @@ function mainMenu() {
 					break;
 				case 'Add Role':
 					addRole();
+					break;
+				case 'Add Employee':
+					addEmployee();
 					break;
 				case 'End Program':
 					process.exit();
@@ -160,6 +164,66 @@ function addRole() {
 							});
 					})
 			});
+	});
+}
+
+function addEmployee() {
+	const roleArr = [];
+	const empArr = [];
+	connection.query('select id, title from role order by title', (err, res) => {
+		if (err) throw err;
+		for (let i = 0; i < res.length; i++) {
+			roleArr.push({value: res[i].id, name: res[i].title});
+		}
+		connection.query("select id, concat(last_name, ', ', first_name) as manager from employee order by last_name, first_name", (err, res) => {
+			if (err) throw err;
+			for (let i = 0; i < res.length; i++) {
+				empArr.push({value: res[i].id, name: res[i].manager});
+			}
+			const questions = [
+				{
+					type: 'input',
+					message: "What is the Employee's first name?",
+					name: 'empFirstName'
+				},
+				{
+					type: 'input',
+					message: "What is the Employee's last name?",
+					name: 'empLastName'
+				},
+				{
+					type: 'list',
+					message: "What is the Employee's Role?",
+					choices: roleArr,
+					name: 'role'
+				},
+				{
+					type: 'list',
+					message: "Who is the Employee's Manager?",
+					choices: empArr,
+					name: 'manager'
+				}
+			];
+			inquirer
+				.prompt(questions)
+				.then((answers) => {
+					connection.query('INSERT INTO employee SET ?',
+					{
+						first_name: answers.empFirstName,
+						last_name: answers.empLastName,
+						role_id: answers.role,
+						manager_id: answers.manager
+					},
+					(err, res) => {
+						if (err) throw err;
+						console.log('Employee Added!');
+						pressAnyKey()
+							.then( () => {
+								mainMenu();
+							});
+					}
+				)});
+		});
 	});
 }
 
