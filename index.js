@@ -21,6 +21,7 @@ function mainMenu() {
 				'View Employees',
 				'View Departments',
 				'View Roles',
+				'Add Department',
 				'End Program'
 			],
 			name: 'mainMenu'
@@ -38,6 +39,9 @@ function mainMenu() {
 					break;
 				case 'View Roles':
 					viewRoles();
+					break;
+				case 'Add Department':
+					addDepartment();
 					break;
 				case 'End Program':
 					process.exit();
@@ -84,6 +88,28 @@ function viewRoles() {
 				mainMenu();
 			});
 	});
+}
+
+function addDepartment() {
+	const question = [
+		{
+			type: 'input',
+			message: 'What is the name of the new department?',
+			name: 'department'
+		}
+	];
+	inquirer
+		.prompt(question)
+		.then((response) => {
+			connection.query('INSERT INTO department (name) VALUES (?)', [response.department], (err, res) => {
+				if (err) throw err;
+				console.log('Department Added!');
+				pressAnyKey()
+					.then( () => {
+						mainMenu();
+					});
+			});
+		});
 }
 
 mainMenu();
