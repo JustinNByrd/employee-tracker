@@ -13,6 +13,7 @@ const connection = mysql.createConnection({
 });
 
 function mainMenu() {
+	console.clear();
 	const question = [
 		{
 			type: 'list',
