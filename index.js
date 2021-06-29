@@ -1,5 +1,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
+const cTable = require('console.table');
 require('dotenv').config();
 
 const connection = mysql.createConnection({
@@ -26,10 +27,18 @@ function mainMenu() {
 		.then((answer) => {
 			switch (answer.mainMenu) {
 				case 'View Employees':
-					console.log('view employees');
+					viewEmployees();
 					break;
 			}
 		})
+}
+
+function viewEmployees() {
+	const sqlStmt = `select CONCAT(a.last_name, ', ', a.first_name) as Employee, b.title as Title, b.salary as Salary, c.name as Department, CONCAT(d.last_name, ', ', d.first_name) as Manager from employee a, role b, department c, employee d where a.role_id = b.id and b.department_id = c.id and a.manager_id = d.id`;
+	connection.query(sqlStmt, (err, res) => {
+		if (err) throw err;
+		console.table(res);
+	});
 }
 
 mainMenu();
