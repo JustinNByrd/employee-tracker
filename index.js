@@ -18,7 +18,8 @@ function mainMenu() {
 			type: 'list',
 			message: 'Enter an option:',
 			choices: [
-				'View Employees'
+				'View Employees',
+				'End Program'
 			],
 			name: 'mainMenu'
 		}
@@ -30,6 +31,8 @@ function mainMenu() {
 				case 'View Employees':
 					viewEmployees();
 					break;
+				case 'End Program':
+					process.exit();
 			}
 		})
 }
