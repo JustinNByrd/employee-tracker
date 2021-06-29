@@ -19,6 +19,7 @@ function mainMenu() {
 			message: 'Enter an option:',
 			choices: [
 				'View Employees',
+				'View Departments',
 				'End Program'
 			],
 			name: 'mainMenu'
@@ -30,6 +31,9 @@ function mainMenu() {
 			switch (answer.mainMenu) {
 				case 'View Employees':
 					viewEmployees();
+					break;
+				case 'View Departments':
+					viewDepartments();
 					break;
 				case 'End Program':
 					process.exit();
@@ -48,7 +52,19 @@ function viewEmployees() {
 		pressAnyKey()
 			.then( () => {
 				mainMenu();
-			})
+			});
+	});
+}
+
+function viewDepartments() {
+	const sqlStmt = `select name as Name from department order by name`;
+	connection.query(sqlStmt, (err, res) => {
+		if (err) throw err;
+		console.table(res);
+		pressAnyKey()
+			.then( () => {
+				mainMenu();
+			});
 	});
 }
 
